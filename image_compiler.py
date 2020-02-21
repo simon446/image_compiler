@@ -11,7 +11,7 @@ import default_palettes
 import image_formats
 
 # Constants
-COLOR_BIT_LENGTH = 2
+COLOR_BIT_LENGTH = 5
 TRANSPARENCY = False
 
 MAX_COLORS = 2**COLOR_BIT_LENGTH
