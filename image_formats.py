@@ -10,12 +10,14 @@
 # x"00",x"00",x"FF",x"FF",x"FF",x"00",x"00",x"FF",
 # x"FF",x"FF",x"FF",x"FF",x"FF",x"FF",x"FF",x"FF",
 def vhdl_style(image_p, bits):
-    if bits % 4 != 0:
-        raise Exception('Pixel bit needs to be a multiple of 4 to output vhdl_style hex format.')
     string = ""
     for y in range(0, len(image_p)):
         for x in range(0, len(image_p[y])):
-            string = string + ("x\"{0:0"+str(int(bits/4))+"x}\",").format(image_p[y][x])
+            if bits % 4 == 0:
+                string = string + ("x\"{0:0"+str(int(bits/4))+"x}\",").format(image_p[y][x])
+            else:
+                string = string + ("\"{0:0"+str(int(bits))+"b}\",").format(image_p[y][x])
+
         string = string + '\n'
     return string
 

@@ -11,7 +11,8 @@ import default_palettes
 import image_formats
 
 # Constants
-COLOR_BIT_LENGTH = 28
+COLOR_BIT_LENGTH = 2
+TRANSPARENCY = False
 
 MAX_COLORS = 2**COLOR_BIT_LENGTH
 
@@ -67,8 +68,9 @@ else:
         print("Compiling image: {}".format(os.path.basename(filename)))
         img = Image.open(filename)
         # Generate palette
-        small_palette = colorgram.extract(img, MAX_COLORS-1)
-        small_palette = [(0,0,0,0)] + small_palette # Include full transparency in palette
+        small_palette = colorgram.extract(img, MAX_COLORS-1 if TRANSPARENCY else MAX_COLORS)
+        if TRANSPARENCY:
+            small_palette = [(0,0,0,0)] + small_palette # Include full transparency in palette
 
         reduce_colors(img, small_palette)
         image_p = image_to_pallete_indices(img, small_palette)
