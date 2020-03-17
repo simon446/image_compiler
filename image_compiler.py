@@ -11,7 +11,8 @@ import default_palettes
 import image_formats
 
 # Constants
-COLOR_BIT_LENGTH = 5
+if len(sys.argv) > 1:
+    COLOR_BIT_LENGTH = int(sys.argv[1])
 TRANSPARENCY = False
 
 MAX_COLORS = 2**COLOR_BIT_LENGTH
@@ -60,10 +61,10 @@ def image_to_pallete_indices(img, color_palette):
             img.putpixel( (x,y), get_closest_color(original_color, color_palette) )
     return indices
 
-if len(sys.argv) < 2:
+if len(sys.argv) < 3:
     print("No file argument found. Usage: image-compiler.py <filename>")
 else:
-    filename = sys.argv[1]
+    filename = sys.argv[2]
     if os.path.exists(filename):
         print("Compiling image: {}".format(os.path.basename(filename)))
         img = Image.open(filename)
@@ -75,17 +76,17 @@ else:
         reduce_colors(img, small_palette)
         image_p = image_to_pallete_indices(img, small_palette)
         # Do someting with resulting image
-        print("\nVHDL IMAGE DATA")
-        print(image_formats.vhdl_style( image_p, COLOR_BIT_LENGTH ) )
-        print("VHDL COLOR PALETTE")
-        print(image_formats.vhdl_style_palette( small_palette ))
+        #print("\nVHDL IMAGE DATA")
+        #print(image_formats.vhdl_style( image_p, COLOR_BIT_LENGTH ) )
+        #print("VHDL COLOR PALETTE")
+        #print(image_formats.vhdl_style_palette( small_palette ))
         print("PIXEL_BIT_SIZE:         {}".format(COLOR_BIT_LENGTH))
         print("PALETTE_PIXEL_BIT_SIZE: 32\n")
         print("IMAGE SIZE:   {}".format(COLOR_BIT_LENGTH*len(image_p[0])*len(image_p)))
         print("PALETTE SIZE: {}".format(32*len(small_palette)))
         print("TOTAL SIZE:   {}".format(len(image_p[0])*len(image_p)*COLOR_BIT_LENGTH + 32*len(small_palette)))
-        if len(sys.argv) > 2:
-            output_path = sys.argv[2]
+        if len(sys.argv) > 3:
+            output_path = sys.argv[3]
             if os.path.exists(os.path.dirname(os.path.abspath(output_path))):
                 img.save(output_path)
                 print("Compilation complete, output saved as: {}".format(output_path))

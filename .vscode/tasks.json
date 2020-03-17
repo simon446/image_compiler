@@ -6,7 +6,7 @@
         {
             "label": "Run python program with sample image",
             "type": "shell",
-            "command": "python image_compiler.py sample.png sample-out.png",
+            "command": "python image_compiler.py 2 sample.png sample-out.png",
             "group": {
                 "kind": "build",
                 "isDefault": true

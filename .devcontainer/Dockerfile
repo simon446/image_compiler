@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See https://go.microsoft.com/fwlink/?linkid=2090316 for license information.
 #-------------------------------------------------------------------------------------------------------------
 
-FROM python:3
+FROM continuumio/anaconda3:2020.02
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
@@ -16,24 +16,23 @@ ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
-# Uncomment the following COPY line and the corresponding lines in the `RUN` command if you wish to
-# include your requirements in the image itself. It is suggested that you only do this if your
-# requirements rarely (if ever) change.
-# COPY requirements.txt /tmp/pip-tmp/
+# Copy environment.yml (if found) to a temp locaition so we update the environment. Also
+# copy "noop.txt" so the COPY instruction does not fail if no environment.yml exists.
+COPY environment.yml* .devcontainer/noop.txt /tmp/conda-tmp/
 
 # Configure apt and install packages
 RUN apt-get update \
     && apt-get -y install --no-install-recommends apt-utils dialog 2>&1 \
     #
     # Verify git, process tools, lsb-release (common in install instructions for CLIs) installed
-    && apt-get -y install git openssh-client iproute2 procps lsb-release \
+    && apt-get -y install git openssh-client less iproute2 procps iproute2 lsb-release \
     #
     # Install pylint
-    && pip --disable-pip-version-check --no-cache-dir install pylint \
+    && /opt/conda/bin/pip install pylint \
     #
-    # Update Python environment based on requirements.txt
-    # && pip --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt \
-    # && rm -rf /tmp/pip-tmp \
+    # Update Python environment based on environment.yml (if present)
+    && if [ -f "/tmp/conda-tmp/environment.yml" ]; then /opt/conda/bin/conda env update -n base -f /tmp/conda-tmp/environment.yml; fi \
+    && rm -rf /tmp/conda-tmp \
     #
     # Create a non-root user to use if preferred - see https://aka.ms/vscode-remote/containers/non-root-user.
     && groupadd --gid $USER_GID $USERNAME \
